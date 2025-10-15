@@ -17,8 +17,9 @@ public class BTree {
 
     private No navegarAteFolha(int info){
         No folha = raiz;
+        int pos;
         while(folha.getvLig(0) != null){
-            int pos = folha.procurarPosicao(info);
+            pos = folha.procurarPosicao(info);
             folha = folha.getvLig(pos);
         }
         return folha;
@@ -40,18 +41,26 @@ public class BTree {
             raiz = pai;
         }
 
-        int meio = getRaiz().getTL()/2;
+        int meio = folha.getTL()/2;
         No noDir = new No(), noEsq = new No();
-        for(int i=0; i<meio; i++){
+        // copia lado esquerdo para o noEsq
+        int i=0;
+        while(i<meio){
             noEsq.setvPos(i,folha.getvPos(i));
             noEsq.setvLig(i,folha.getvLig(i));
             noEsq.setTL(noEsq.getTL()+1);
+            i++;
         }
-        for(int i=meio+1; i< folha.getTL(); i++){
+        noEsq.setvLig(i, folha.getvLig(i));
+        // copia lado direito para o noDir
+        i=meio+1;
+        while(i<folha.getTL()){
             noDir.setvPos(i,folha.getvPos(i));
             noDir.setvLig(i,folha.getvLig(i));
             noDir.setTL(noDir.getTL()+1);
+            i++;
         }
+        noDir.setvLig(i, folha.getvLig(i));
 
         int pos = pai.procurarPosicao(folha.getvInfo(meio));
         pai.remanejarPosicao(pos);
@@ -65,21 +74,22 @@ public class BTree {
         }
     }
 
-    public void Inserir(int info, int posArq){
-        No folha;
+    public void Inserir(int info, int posArq) {
+        No folha, pai;
         int pos;
-        if(raiz == null){
+        if (raiz == null)
             raiz = new No(info, posArq);
-        }
-        else{
-            folha = navegarAteFolha(posArq);
+        else {
+            folha = navegarAteFolha(info);
             pos = folha.procurarPosicao(info);
             folha.remanejarPosicao(pos);
+
             folha.setvInfo(pos, info);
             folha.setvPos(pos, posArq);
-            folha.setTL(folha.getTL()+1);
-            if(folha.getTL() == No.m*2){
-                No pai = localizarPai(folha, info);
+            folha.setTL(folha.getTL() + 1);
+
+            if (folha.getTL() > No.m * 2) {
+                pai = localizarPai(folha, info);
                 split(folha, pai);
             }
         }

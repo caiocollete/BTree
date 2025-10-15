@@ -3,13 +3,13 @@ public class No {
     public static final int m = 2;
     private int vInfo[];
     private int vPos[];
-    private No vlig[];
+    private No vLig[];
     private int TL;
 
     public No() {
         vInfo = new int[m*2+1];
         vPos = new int[m*2+1];
-        vlig = new No[m*2+2];
+        vLig = new No[m*2+2];
         TL = 0;
     }
 
@@ -22,19 +22,18 @@ public class No {
 
     public int procurarPosicao(int info){
         int pos = 0;
-        while(pos < TL && vPos[pos] < info){
+        while(pos < TL && vInfo[pos] < info){
             pos++;
         }
         return pos;
     }
 
     public void remanejarPosicao(int pos){
+        vLig[TL+1] = vLig[TL];
         for(int i = TL; i > pos; i--){
-            // remanejar o vInfo, vPos e vLig
-            // nao pode perder as ligacoes se nao ja era, perde uma parte da arvore
             vInfo[i] = vInfo[i-1];
             vPos[i] = vPos[i-1];
-            vlig[i] = vlig[i-1];
+            vLig[i] = vLig[i-1];
         }
     }
 
@@ -55,11 +54,11 @@ public class No {
     }
 
     public No getvLig(int pos) {
-        return vlig[pos];
+        return vLig[pos];
     }
 
     public void setvLig(int pos, No lig) {
-        this.vlig[pos] = lig;
+        this.vLig[pos] = lig;
     }
 
     public int getTL() {
