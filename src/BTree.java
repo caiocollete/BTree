@@ -35,24 +35,30 @@ public class BTree {
     }
 
     private void split(No folha, No pai){
+        if(pai==folha){
+            pai = new No();
+            raiz = pai;
+        }
+
         int meio = getRaiz().getTL()/2;
         No noDir = new No(), noEsq = new No();
         for(int i=0; i<meio; i++){
-            noDir.setvPos(i,folha.getvPos(i));
-            noDir.setvLig(i,folha.getvLig(i));
-            noDir.setTL(noDir.getTL()+1);
-        }
-        for(int i=meio+1; i< folha.getTL(); i++){
             noEsq.setvPos(i,folha.getvPos(i));
             noEsq.setvLig(i,folha.getvLig(i));
             noEsq.setTL(noEsq.getTL()+1);
+        }
+        for(int i=meio+1; i< folha.getTL(); i++){
+            noDir.setvPos(i,folha.getvPos(i));
+            noDir.setvLig(i,folha.getvLig(i));
+            noDir.setTL(noDir.getTL()+1);
         }
 
         int pos = pai.procurarPosicao(folha.getvInfo(meio));
         pai.remanejarPosicao(pos);
         pai.setvPos(pos, folha.getvPos(meio));
-        pai.setvLig(pos, noDir);
+        pai.setvInfo(pos, folha.getvInfo(meio));
         pai.setvLig(pos, noEsq);
+        pai.setvLig(pos+1, noDir);
         pai.setTL(pai.getTL() + 1);
         if(pai.getTL() > No.m*2){
             split(pai, localizarPai(pai, pai.getvInfo(0)));
