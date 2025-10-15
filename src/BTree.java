@@ -36,41 +36,101 @@ public class BTree {
     }
 
     private void split(No folha, No pai){
-        if(pai==folha){
+        No noDir = new No();
+        No noEsq = new No();
+        int i, pos;
+
+        if(folha==pai){
             pai = new No();
             raiz = pai;
         }
 
-        int meio = folha.getTL()/2;
-        No noDir = new No(), noEsq = new No();
-        // copia lado esquerdo para o noEsq
-        int i=0;
-        while(i<meio){
+        for (i=0; i<No.m; i++)
+        {
+            noEsq.setvInfo(i,folha.getvInfo(i));
             noEsq.setvPos(i,folha.getvPos(i));
             noEsq.setvLig(i,folha.getvLig(i));
-            noEsq.setTL(noEsq.getTL()+1);
-            i++;
         }
-        noEsq.setvLig(i, folha.getvLig(i));
-        // copia lado direito para o noDir
-        i=meio+1;
-        while(i<folha.getTL()){
-            noDir.setvPos(i,folha.getvPos(i));
-            noDir.setvLig(i,folha.getvLig(i));
-            noDir.setTL(noDir.getTL()+1);
-            i++;
-        }
-        noDir.setvLig(i, folha.getvLig(i));
+        noEsq.setvLig(No.m, folha.getvLig(No.m));
+        noEsq.setTL(No.m);
 
-        int pos = pai.procurarPosicao(folha.getvInfo(meio));
+        for (i=No.m+1; i<2*No.m+1; i++)
+        {
+            noDir.setvInfo(i-(No.m+1),folha.getvInfo(i));
+            noDir.setvPos(i-(No.m+1),folha.getvPos(i));
+            noDir.setvLig(i-(No.m+1),folha.getvLig(i));
+        }
+
+        noDir.setvLig(No.m, folha.getvLig(No.m*2+1));
+        noDir.setTL(No.m);
+
+        pos = pai.procurarPosicao(folha.getvInfo(No.m));
         pai.remanejarPosicao(pos);
-        pai.setvPos(pos, folha.getvPos(meio));
-        pai.setvInfo(pos, folha.getvInfo(meio));
+
+        pai.setvPos(pos, folha.getvPos(No.m));
+        pai.setvInfo(pos, folha.getvInfo(No.m));
+
+        pai.setTL(pai.getTL() + 1);
+
         pai.setvLig(pos, noEsq);
         pai.setvLig(pos+1, noDir);
-        pai.setTL(pai.getTL() + 1);
+
         if(pai.getTL() > No.m*2){
-            split(pai, localizarPai(pai, pai.getvInfo(0)));
+            folha = pai;
+            pai = localizarPai(folha, folha.getvInfo(0));
+            split(folha, pai);
+        }
+    }
+
+    private void split_chico(No folha, No pai){
+        No noDir = new No();
+        No noEsq = new No();
+        int i, pos;
+
+        for (i=0; i<No.m; i++)
+        {
+            noEsq.setvInfo(i,folha.getvInfo(i));
+            noEsq.setvPos(i,folha.getvPos(i));
+            noEsq.setvLig(i,folha.getvLig(i));
+        }
+        noEsq.setvLig(No.m, folha.getvLig(No.m));
+        noEsq.setTL(No.m);
+
+        for (i=No.m+1; i<2*No.m+1; i++)
+        {
+            noDir.setvInfo(i-(No.m+1),folha.getvInfo(i));
+            noDir.setvPos(i-(No.m+1),folha.getvPos(i));
+            noDir.setvLig(i-(No.m+1),folha.getvLig(i));
+        }
+
+        noDir.setvLig(No.m, folha.getvLig(No.m*2+1));
+        noDir.setTL(No.m);
+
+        if(folha==pai){
+            pai.setvInfo(0, folha.getvInfo(No.m));
+            pai.setvPos(0, folha.getvPos(No.m));
+            pai.setTL(1);
+
+            pai.setvLig(0,noEsq);
+            pai.setvLig(1, noDir);
+        }
+        else{
+            pos = pai.procurarPosicao(folha.getvInfo(No.m));
+            pai.remanejarPosicao(pos);
+
+            pai.setvPos(pos, folha.getvPos(No.m));
+            pai.setvInfo(pos, folha.getvInfo(No.m));
+
+            pai.setTL(pai.getTL() + 1);
+
+            pai.setvLig(pos, noEsq);
+            pai.setvLig(pos+1, noDir);
+
+            if(pai.getTL() > No.m*2){
+                folha = pai;
+                pai = localizarPai(folha, folha.getvInfo(0));
+                split_chico(folha, pai);
+            }
         }
     }
 
