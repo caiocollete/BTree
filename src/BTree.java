@@ -165,7 +165,7 @@ public class BTree {
                 in_ordem_recursivo_chico(raiz.getvLig(i));
                 System.out.println(raiz.getvInfo(i));
             }
-            in_ordem_recursivo_chico(raiz.getvLig(raiz.getTL()-1));
+            in_ordem_recursivo_chico(raiz.getvLig(raiz.getTL()));
         }
     }
 }
