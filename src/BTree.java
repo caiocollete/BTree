@@ -156,7 +156,7 @@ public class BTree {
     }
 
     public void in_ordem_recursivo() {
-        in_ordem_recursivo_chico(this.raiz);
+        inordem(this.raiz);
     }
 
     public void in_ordem_recursivo_chico(No raiz){
@@ -166,6 +166,16 @@ public class BTree {
                 System.out.println(raiz.getvInfo(i));
             }
             in_ordem_recursivo_chico(raiz.getvLig(raiz.getTL()));
+        }
+    }
+
+    public void inordem(No raiz) {
+        int i = -1;
+        while (raiz!=null && i<raiz.getTL()) {
+            if (i > -1) {
+                System.out.println(raiz.getvInfo(i));
+            }
+            inordem(raiz.getvLig(++i));
         }
     }
 }
